@@ -2,52 +2,52 @@
 let itemsList = document.querySelectorAll('li') ;
 // convert the returned nodeList to an array :
 let itemsArray =Array.from(itemsList) ;
-//grap the main :
-let main = document.getElementsByTagName('main');
+let clickCounterpartArray ; // any li onclick event will set all items in this array to false than set the one that has the same index as its index to true.
 
 
-// clikc + mouseover events :
-function eventFun() {
+// mouseover handeler : set random background color on mouseover :
+function liMouseoverHandeler(event){
+   event.target.style.background = `rgb(${Math.floor(Math.random()*250)},${Math.floor(Math.random()*250)},${Math.floor(Math.random()*20)})`;
+    
+}
+
+//Mouseover function: iterates over li items adding mousevoer event to each li :
+function mouseoverCaller() {
     // iterate over all li items adding the event to each :
-  for(let i=0 ; i<itemsArray.length ; i++) {
-    //nav li mouseover : random background color on mouseover :
-itemsArray[i].addEventListener('mouseover' , ()=> itemsArray[i].style.background = `rgb(${Math.floor(Math.random()*250)},${Math.floor(Math.random()*250)},${Math.floor(Math.random()*250)})`);
-    
- // click event : main + li items :
- itemsArray[i].addEventListener('click' , ()=> { 
-   // to ellimenate the effect form the previously clicked li when another li clicked :
-   let clickedtItem = itemsArray[i] ; // because indexOf needs item value
-        // iterate over all items:
-   for (let v=0 ; v<itemsArray.length ; v++){
-     // store each of items in var to use it in indexOf() :
-     let notClickedItem = itemsArray[v] ;
-     // check whether the item is the clicked one or another one :
-     if(itemsArray.indexOf(notClickedItem) !== itemsArray.indexOf(clickedtItem)) {
-       //give the notklicked item normal styles to get rid of the styles applied when it was clicked before :
-         notClickedItem.style.background = 'none';
-       notClickedItem.style.border='1em solid grey';
-       notClickedItem.style.borderRadius ='0';
-       notClickedItem.style.color = 'black';
-         }
-   else{
-  // and give the clicked special style : 
- clickedtItem.style.borderBottom ='none';
- clickedtItem.style.borderRadius ='0 10px'; 
- clickedtItem.style.textAlign = 'left';
- // giv the font of li a different color than the li to be clear :
-clickedtItem.style.color=`rgb(${Math.floor(Math.random()*250)-50},${Math.floor(Math.random()*250)-50},${Math.floor(Math.random()*250)+50})`;
- // give the main page the same color as the li :
- main[0].style.background = `${itemsArray[i].style.background}`;
-   } } }) ; 
- 
-    
-  }
+    for(let i=0 ; i < itemsArray.length ; i++) {
+    //random background color on mouseover :
+      itemsArray[i].addEventListener('mouseover' ,liMouseoverHandeler);
+    }
 }
-eventFun();
 
-/*function mainEvent() {
-  main[0].addEventListener('mouseover' , ()=> main[0].style.background = 'grey') ;
-   main[0].addEventListener('mouseout' , ()=> main[0].style.background = 'none') ;
-                           
+
+// click handeler : remove mouseover event on the clicked li :
+function ClickHandeler(event) {
+    // first : call the mouseover assigner to assign mouseover that was removed on the previous click :
+    mouseoverCaller();
+    // second: create a counterpart array :
+    clickCounterpartArray = new Array(itemsArray.length);
+//third: iterate over the array assigning all items to false :
+for(let i=0 ; i< clickCounterpartArray.length ; i++) {
+    clickCounterpartArray[i] = false ; 
 }
-mainEvent() ;*/
+// assign the counterpart item in this array to true when the counterpart li is clicked :
+clickCounterpartArray[itemsArray.indexOf(event.target)] = true ;
+// if the couterpart item in the counterpat array is true apply styling rules of 'click' event :
+if(clickCounterpartArray[itemsArray.indexOf(event.target)]) {
+    event.target.removeEventListener('mouseover', liMouseoverHandeler);
+    // and color the main body as the clicked li :
+    document.querySelector('main').style.background= event.target.style.background ;
+        }
+}
+
+// iterate over each li adding click event :
+function clickCaller(){
+    for(let i = 0 ; i<itemsArray.length ; i++ ){
+itemsArray[i].addEventListener('click' , ClickHandeler) }
+    }       
+    
+
+ // call the 2 functions to assign the 2 events :
+ mouseoverCaller();
+ clickCaller();
